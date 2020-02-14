@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shopbakerclick/screens/search.dart';
 import 'package:shopbakerclick/utility/my_constant.dart';
 import 'package:shopbakerclick/utility/my_style.dart';
 import 'package:shopbakerclick/widget/account.dart';
@@ -65,8 +66,11 @@ class _HomeState extends State<Home> {
     return IconButton(
       tooltip: 'ค้นหาสินค้า',
       icon: Icon(Icons.search, color: Colors.white, size: Mystyle().myIconSize),
-      onPressed: () {},
-    );
+      onPressed: () {
+        MaterialPageRoute materialPageRoute = MaterialPageRoute(builder: (BuildContext buildContext){return Search();});
+        Navigator.of(context).push(materialPageRoute);
+      },
+    ); 
   }
 
   @override
@@ -74,10 +78,10 @@ class _HomeState extends State<Home> {
     return Scaffold(
       appBar: AppBar(
         actions: <Widget>[searchButton()],
-        backgroundColor: Mystyle().primaryColor,
+        // backgroundColor: Mystyle().primaryColor,
         title: Text(
           MyConstant().appName,
-          style: TextStyle(color: Colors.white),
+          // style: TextStyle(color: Colors.white),
         ),
       ),
       body: showWidgets[index],
