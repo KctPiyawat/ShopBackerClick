@@ -67,10 +67,14 @@ class _HomeState extends State<Home> {
       tooltip: 'ค้นหาสินค้า',
       icon: Icon(Icons.search, color: Colors.white, size: Mystyle().myIconSize),
       onPressed: () {
-        MaterialPageRoute materialPageRoute = MaterialPageRoute(builder: (BuildContext buildContext){return Search();});
+        MaterialPageRoute materialPageRoute = MaterialPageRoute(
+          builder: (BuildContext buildContext) {
+            return Search(index: 0,);
+          },
+        );
         Navigator.of(context).push(materialPageRoute);
       },
-    ); 
+    );
   }
 
   @override
