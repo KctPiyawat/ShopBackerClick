@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -99,11 +100,40 @@ class _SearchState extends State<Search> {
     );
   }
 
+  Widget showImage(int index) {
+    String image = productModels[index].pic;
+
+    if (image != null) {
+      Uint8List uint8list = base64Decode(productModels[index].pic);
+      return Container(
+        height: 150.0,
+        child: Image.memory(uint8list),
+      );
+    } else {
+      return Container(
+        height: 150.0,
+        child: Image.asset('images/nopicture.png'),
+      );
+    }
+  }
+
   Widget showListView() {
     return ListView.builder(
         itemCount: productModels.length,
         itemBuilder: (BuildContext buildContext, int index) {
-          return Text(productModels[index].name);
+          return Container(padding: EdgeInsets.only(left: 50.0, right: 50.0),
+            child: Card(
+                        child: Column(
+                children: <Widget>[
+                  showImage(index),
+                  Text(
+                    productModels[index].name,
+                    style: Mystyle().titleH3,
+                  ),
+                ],
+              ),
+            ),
+          );
         });
   }
 
