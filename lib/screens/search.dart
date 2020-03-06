@@ -20,13 +20,14 @@ class _SearchState extends State<Search> {
   // Field
   int index;
   List<ProductModel> productModels = List();
+  List<Widget> widgets = List();
 
   // Method
   @override
   void initState() {
     super.initState();
     index = widget.index;
-    print('index = $index');
+    // print('index = $index');
     readData();
   }
 
@@ -34,18 +35,49 @@ class _SearchState extends State<Search> {
     try {
       List<String> urls = MyConstant().apiReadProduct;
       Response response = await Dio().get(urls[index]);
-      print('response = $response');
+      // print('response = $response');
+
+      int indexGridView = 0;
 
       // var result = json.decode(response.data);
       for (var json in response.data) {
         ProductModel productModel = ProductModel.fromJson(json);
+
         setState(() {
           productModels.add(productModel);
+          Widget widget = createCard(productModel, indexGridView);
+          widgets.add(widget);
         });
+        indexGridView++;
       }
     } catch (e) {
       print('eReadData ===>> ${e.toString()}');
     }
+  }
+
+  Widget createCard(ProductModel productModel, int index) {
+    return Card(
+      child: Column(mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: <Widget>[
+          showImage(index),
+          showTextGritView(productModel),
+        ],
+      ),
+    );
+  }
+
+  Widget showTextGritView(ProductModel productModel){
+
+    String string = productModel.name;
+    int amount = 20;
+
+    if (string.length > amount) {
+      string = string.substring(0,amount-1);
+      string ='$string ...';
+      
+    }
+
+    return Text(string);
   }
 
   Widget cancelButton() {
@@ -106,7 +138,7 @@ class _SearchState extends State<Search> {
     if (image != null) {
       Uint8List uint8list = base64Decode(productModels[index].pic);
       return Container(
-        height: 150.0,
+        height: 60.0,
         child: Image.memory(uint8list),
       );
     } else {
@@ -121,9 +153,10 @@ class _SearchState extends State<Search> {
     return ListView.builder(
         itemCount: productModels.length,
         itemBuilder: (BuildContext buildContext, int index) {
-          return Container(padding: EdgeInsets.only(left: 50.0, right: 50.0),
+          return Container(
+            padding: EdgeInsets.only(left: 50.0, right: 50.0),
             child: Card(
-                        child: Column(
+              child: Column(
                 children: <Widget>[
                   showImage(index),
                   Text(
@@ -137,6 +170,16 @@ class _SearchState extends State<Search> {
         });
   }
 
+  Widget showGritView() {
+    return Container(padding: EdgeInsets.all(10.0),
+      child: GridView.extent(crossAxisSpacing: 10.0,
+        mainAxisSpacing: 10.0,
+        maxCrossAxisExtent: 150.0,
+        children: widgets,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -145,7 +188,7 @@ class _SearchState extends State<Search> {
         leading: backButton(),
         // backgroundColor: Mystyle().primaryColor,
       ),
-      body: productModels.length == 0 ? showProcess() : showListView(),
+      body: productModels.length == 0 ? showProcess() : showGritView(),
     );
   }
 }
