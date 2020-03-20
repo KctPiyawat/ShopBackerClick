@@ -15,6 +15,7 @@ class _HomeState extends State<Home> {
   // Field
   List<Widget> showWidgets = [MainPage(), Braket(), Account()];
   int index = 0;
+  String searchString;
 
   // Method
   BottomNavigationBarItem homeNav() {
@@ -62,31 +63,62 @@ class _HomeState extends State<Home> {
         ]);
   }
 
-  Widget searchButton() {
+  Widget searchFrom() {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12.0),
+        color: Colors.black26,
+      ),
+      height: 50.0,
+      child: TextField(onChanged: (value) => searchString = value.trim(),
+        style: TextStyle(color: Colors.white),
+        decoration: InputDecoration(
+          contentPadding: EdgeInsets.only(left: 16.0),
+          border: InputBorder.none,
+          hintStyle: TextStyle(color: Mystyle().white1),
+          hintText: 'ค้นหาสินค้า',
+        ),
+      ),
+    );
+  }
+
+  IconButton searchIconButton() {
     return IconButton(
       tooltip: 'ค้นหาสินค้า',
       icon: Icon(Icons.search, color: Colors.white, size: Mystyle().myIconSize),
       onPressed: () {
-        MaterialPageRoute materialPageRoute = MaterialPageRoute(
-          builder: (BuildContext buildContext) {
-            return Search(index: 0,);
-          },
-        );
-        Navigator.of(context).push(materialPageRoute);
+        if (searchString==null || searchString.isEmpty) {
+          print('Have Space');
+         
+        } else {
+          routeToSearch();
+        }
       },
     );
+  }
+
+  void routeToSearch() {
+    MaterialPageRoute materialPageRoute = MaterialPageRoute(
+      builder: (BuildContext buildContext) {
+        return Search(searchString: searchString,
+          index: 0,
+        );
+      },
+    );
+    Navigator.of(context).push(materialPageRoute);
+  }
+
+  Widget myDarwer() {
+    return Drawer();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: myDarwer(),
       appBar: AppBar(
-        actions: <Widget>[searchButton()],
-        // backgroundColor: Mystyle().primaryColor,
-        title: Text(
-          MyConstant().appName,
-          // style: TextStyle(color: Colors.white),
-        ),
+        title: searchFrom(),
+        actions: <Widget>[searchIconButton()],
       ),
       body: showWidgets[index],
       bottomNavigationBar: myButtonNavBar(),
