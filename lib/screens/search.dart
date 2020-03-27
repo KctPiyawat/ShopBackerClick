@@ -7,11 +7,12 @@ import 'package:flutter/painting.dart';
 import 'package:shopbakerclick/models/product_model.dart';
 import 'package:shopbakerclick/utility/my_constant.dart';
 import 'package:shopbakerclick/utility/my_style.dart';
+import 'package:shopbakerclick/utility/normal_dialog.dart';
 
 class Search extends StatefulWidget {
   final int index;
   final String searchString;
-  Search({Key key, this.index,this.searchString}) : super(key: key);
+  Search({Key key, this.index, this.searchString}) : super(key: key);
 
   @override
   _SearchState createState() => _SearchState();
@@ -23,26 +24,27 @@ class _SearchState extends State<Search> {
   List<ProductModel> productModels = List();
   List<Widget> widgets = List();
   String search;
+  bool statusAlert = true;
 
   // Method
   @override
   void initState() {
     super.initState();
     index = widget.index;
-    search =widget.searchString;
+    search = widget.searchString;
     // print('index = $index');
     readData();
   }
 
   Future<void> readData() async {
     try {
-      List<String> urls = MyConstant().apiReadProduct;    
+      productModels.clear();
+
+      List<String> urls = MyConstant().apiReadProduct;
 
       if (index == 0) {
         urls[0] = '${urls[0]}$search';
-        
-      } else {
-      }
+      } else {}
 
       Response response = await Dio().get(urls[index]);
       // print('response = $response');
@@ -67,7 +69,8 @@ class _SearchState extends State<Search> {
 
   Widget createCard(ProductModel productModel, int index) {
     return Card(
-      child: Column(mainAxisAlignment: MainAxisAlignment.spaceAround,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
           showImage(index),
           showTextGritView(productModel),
@@ -76,15 +79,13 @@ class _SearchState extends State<Search> {
     );
   }
 
-  Widget showTextGritView(ProductModel productModel){
-
+  Widget showTextGritView(ProductModel productModel) {
     String string = productModel.name;
     int amount = 20;
 
     if (string.length > amount) {
-      string = string.substring(0,amount-1);
-      string ='$string ...';
-      
+      string = string.substring(0, amount - 1);
+      string = '$string ...';
     }
 
     return Text(string);
@@ -99,10 +100,20 @@ class _SearchState extends State<Search> {
     );
   }
 
+  Widget searchButton() {
+    return IconButton(
+      icon: Icon(Icons.search),
+      onPressed: () {
+
+        print('search ====... $search');
+        readData();
+      },
+    );
+  }
+
   Widget searchFrom() {
     if (search == null) {
-      search ='';
-      
+      search = '';
     }
     return Container(
       decoration: BoxDecoration(
@@ -110,19 +121,22 @@ class _SearchState extends State<Search> {
         color: Colors.black26,
       ),
       height: 40.0,
-      child: TextFormField(initialValue: search,
-        decoration: InputDecoration(
+      child: TextFormField(onChanged: (value){
+        if (statusAlert) {
+          // print('Show Alert');
+          normalDialog(context, 'Tip And Technic', 'Search Many Word By Space Word');
+          statusAlert = false;
+          search = value.trim();
+        } else {
+          search = value.trim();
+        }
+      },
+        style: TextStyle(color: Colors.white),
+        initialValue: search,
+        decoration: InputDecoration(prefix: SizedBox(width: 16.0),
           border: InputBorder.none,
-          suffixIcon: Icon(
-            Icons.cancel,
-            color: Mystyle().white1,
-          ),
           hintStyle: TextStyle(color: Mystyle().white1),
           hintText: 'ค้นหาสินค้า',
-          prefixIcon: Icon(
-            Icons.search,
-            color: Mystyle().white1,
-          ),
         ),
       ),
     );
@@ -185,8 +199,10 @@ class _SearchState extends State<Search> {
   }
 
   Widget showGritView() {
-    return Container(padding: EdgeInsets.all(10.0),
-      child: GridView.extent(crossAxisSpacing: 10.0,
+    return Container(
+      padding: EdgeInsets.all(10.0),
+      child: GridView.extent(
+        crossAxisSpacing: 10.0,
         mainAxisSpacing: 10.0,
         maxCrossAxisExtent: 150.0,
         children: widgets,
@@ -200,6 +216,7 @@ class _SearchState extends State<Search> {
       appBar: AppBar(
         title: searchFrom(),
         leading: backButton(),
+        actions: <Widget>[searchButton()],
         // backgroundColor: Mystyle().primaryColor,
       ),
       body: productModels.length == 0 ? showProcess() : showGritView(),

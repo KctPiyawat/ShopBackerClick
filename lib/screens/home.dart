@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shopbakerclick/screens/search.dart';
-import 'package:shopbakerclick/utility/my_constant.dart';
+
 import 'package:shopbakerclick/utility/my_style.dart';
 import 'package:shopbakerclick/widget/account.dart';
 import 'package:shopbakerclick/widget/braket.dart';
@@ -69,11 +69,14 @@ class _HomeState extends State<Home> {
         borderRadius: BorderRadius.circular(12.0),
         color: Colors.black26,
       ),
-      height: 50.0,
-      child: TextField(onChanged: (value) => searchString = value.trim(),
+      height: 40.0,
+      child: TextField(
+        onChanged: (value) => searchString = value.trim(),
         style: TextStyle(color: Colors.white),
         decoration: InputDecoration(
-          contentPadding: EdgeInsets.only(left: 16.0),
+          prefix: SizedBox(
+            width: 16.0,
+          ),
           border: InputBorder.none,
           hintStyle: TextStyle(color: Mystyle().white1),
           hintText: 'ค้นหาสินค้า',
@@ -85,11 +88,14 @@ class _HomeState extends State<Home> {
   IconButton searchIconButton() {
     return IconButton(
       tooltip: 'ค้นหาสินค้า',
-      icon: Icon(Icons.search, color: Colors.white, size: Mystyle().myIconSize),
+      icon: Icon(
+        Icons.search,
+        color: Colors.white,
+        size: Mystyle().myIconSize,
+      ),
       onPressed: () {
-        if (searchString==null || searchString.isEmpty) {
+        if (searchString == null || searchString.isEmpty) {
           print('Have Space');
-         
         } else {
           routeToSearch();
         }
@@ -100,7 +106,8 @@ class _HomeState extends State<Home> {
   void routeToSearch() {
     MaterialPageRoute materialPageRoute = MaterialPageRoute(
       builder: (BuildContext buildContext) {
-        return Search(searchString: searchString,
+        return Search(
+          searchString: searchString,
           index: 0,
         );
       },
