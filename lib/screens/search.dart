@@ -104,9 +104,14 @@ class _SearchState extends State<Search> {
     return IconButton(
       icon: Icon(Icons.search),
       onPressed: () {
-
-        print('search ====... $search');
-        readData();
+        if (productModels.length != 0) {
+          productModels
+              .removeWhere((ProductModel productModel) => productModel != null);
+          widgets.removeWhere((Widget widget) => widget != null);
+        }
+        setState(() {
+          readData();
+        });
       },
     );
   }
@@ -121,19 +126,22 @@ class _SearchState extends State<Search> {
         color: Colors.black26,
       ),
       height: 40.0,
-      child: TextFormField(onChanged: (value){
-        if (statusAlert) {
-          // print('Show Alert');
-          normalDialog(context, 'Tip And Technic', 'Search Many Word By Space Word');
-          statusAlert = false;
-          search = value.trim();
-        } else {
-          search = value.trim();
-        }
-      },
+      child: TextFormField(
+        onChanged: (value) {
+          if (statusAlert) {
+            // print('Show Alert');
+            normalDialog(
+                context, 'Tip And Technic', 'Search Many Word By Space Word');
+            statusAlert = false;
+            search = value.trim();
+          } else {
+            search = value.trim();
+          }
+        },
         style: TextStyle(color: Colors.white),
         initialValue: search,
-        decoration: InputDecoration(prefix: SizedBox(width: 16.0),
+        decoration: InputDecoration(
+          prefix: SizedBox(width: 16.0),
           border: InputBorder.none,
           hintStyle: TextStyle(color: Mystyle().white1),
           hintText: 'ค้นหาสินค้า',
@@ -175,27 +183,6 @@ class _SearchState extends State<Search> {
         child: Image.asset('images/nopicture.png'),
       );
     }
-  }
-
-  Widget showListView() {
-    return ListView.builder(
-        itemCount: productModels.length,
-        itemBuilder: (BuildContext buildContext, int index) {
-          return Container(
-            padding: EdgeInsets.only(left: 50.0, right: 50.0),
-            child: Card(
-              child: Column(
-                children: <Widget>[
-                  showImage(index),
-                  Text(
-                    productModels[index].name,
-                    style: Mystyle().titleH3,
-                  ),
-                ],
-              ),
-            ),
-          );
-        });
   }
 
   Widget showGritView() {
