@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:shopbakerclick/models/product_model.dart';
+import 'package:shopbakerclick/screens/detail_product.dart';
 import 'package:shopbakerclick/utility/my_constant.dart';
 import 'package:shopbakerclick/utility/my_style.dart';
 import 'package:shopbakerclick/utility/normal_dialog.dart';
@@ -43,7 +44,7 @@ class _SearchState extends State<Search> {
       List<String> urls = MyConstant().apiReadProduct;
 
       if (index == 0) {
-        urls[0] = '${urls[0]}$search';
+        urls[0] = '${urls[0]}$search&start=1&end12';
       } else {}
 
       Response response = await Dio().get(urls[index]);
@@ -68,13 +69,23 @@ class _SearchState extends State<Search> {
   }
 
   Widget createCard(ProductModel productModel, int index) {
-    return Card(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: <Widget>[
-          showImage(index),
-          showTextGritView(productModel),
-        ],
+    return GestureDetector(
+      onTap: () {
+        print('you click index $index');
+        MaterialPageRoute route =
+            MaterialPageRoute(builder: (BuildContext context) {
+          return DetailProduct(productModel: productModels[index],);
+        });
+        Navigator.of(context).push(route);
+      },
+      child: Card(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: <Widget>[
+            showImage(index),
+            showTextGritView(productModel),
+          ],
+        ),
       ),
     );
   }
