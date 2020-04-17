@@ -4,6 +4,8 @@ import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:shopbakerclick/models/pls_model.dart';
+import 'package:shopbakerclick/models/product_limit_model.dart';
 import 'package:shopbakerclick/models/product_model.dart';
 import 'package:shopbakerclick/screens/detail_product.dart';
 import 'package:shopbakerclick/utility/my_constant.dart';
@@ -24,6 +26,8 @@ class _SearchState extends State<Search> {
   int index;
   List<ProductModel> productModels = List();
   List<Widget> widgets = List();
+  List<ProductLimitModel> productLimitModels = List();
+  List<PlsModel> plsModels = List();
   String search;
   bool statusAlert = true;
 
@@ -44,8 +48,9 @@ class _SearchState extends State<Search> {
       List<String> urls = MyConstant().apiReadProduct;
 
       if (index == 0) {
-        urls[0] = '${urls[0]}$search&start=1&end12';
-      } else {}
+        urls[0] = 'http://210.86.171.110:89/webapi3/api/limit?name=$search&start=1&end=12';
+        print('url ====> ${urls[0]}');
+      } 
 
       Response response = await Dio().get(urls[index]);
       // print('response = $response');
@@ -54,11 +59,13 @@ class _SearchState extends State<Search> {
 
       // var result = json.decode(response.data);
       for (var json in response.data) {
-        ProductModel productModel = ProductModel.fromJson(json);
+        
+        ProductLimitModel limitModel = ProductLimitModel.fromJson(json);
 
         setState(() {
-          productModels.add(productModel);
-          Widget widget = createCard(productModel, indexGridView);
+          
+          productLimitModels.add(limitModel);
+          Widget widget = createCard(limitModel, indexGridView);
           widgets.add(widget);
         });
         indexGridView++;
@@ -68,13 +75,13 @@ class _SearchState extends State<Search> {
     }
   }
 
-  Widget createCard(ProductModel productModel, int index) {
+  Widget createCard(ProductLimitModel limitModel, int index) {
     return GestureDetector(
       onTap: () {
         print('you click index $index');
         MaterialPageRoute route =
             MaterialPageRoute(builder: (BuildContext context) {
-          return DetailProduct(productModel: productModels[index],);
+          return DetailProduct();
         });
         Navigator.of(context).push(route);
       },
@@ -83,15 +90,15 @@ class _SearchState extends State<Search> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
             showImage(index),
-            showTextGritView(productModel),
+            showTextGritView(index),
           ],
         ),
       ),
     );
   }
 
-  Widget showTextGritView(ProductModel productModel) {
-    String string = productModel.name;
+  Widget showTextGritView(int index) {
+    String string = productLimitModels[index].name;
     int amount = 20;
 
     if (string.length > amount) {
@@ -180,7 +187,7 @@ class _SearchState extends State<Search> {
   }
 
   Widget showImage(int index) {
-    String image = productModels[index].pic;
+    String image = '${productLimitModels[index].pic1}';
 
     if (image != null) {
       Uint8List uint8list = base64Decode(productModels[index].pic);
@@ -217,7 +224,7 @@ class _SearchState extends State<Search> {
         actions: <Widget>[searchButton()],
         // backgroundColor: Mystyle().primaryColor,
       ),
-      body: productModels.length == 0 ? showProcess() : showGritView(),
+      body: productLimitModels.length == 0 ? showProcess() : showGritView(),
     );
   }
 }
